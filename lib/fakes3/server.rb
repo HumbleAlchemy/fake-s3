@@ -138,7 +138,7 @@ module FakeS3
         response['Accept-Ranges'] = "bytes"
         response['Last-Ranges'] = "bytes"
         response['Access-Control-Allow-Origin'] = '*'
-
+        add_cors_headers(request, response)
         real_obj.custom_metadata.each do |header, value|
           response.header['x-amz-meta-' + header] = value
         end
@@ -232,8 +232,7 @@ module FakeS3
         response.header['ETag']  = "\"#{real_obj.md5}\""
       end
 
-      response['Access-Control-Allow-Origin']   = '*'
-      response['Access-Control-Allow-Headers']  = 'Authorization, Content-Length'
+      add_cors_headers(request, response)
       response['Access-Control-Expose-Headers'] = 'ETag'
 
       response.status = 200
@@ -305,8 +304,7 @@ module FakeS3
       end
 
       response['Content-Type']                  = 'text/xml'
-      response['Access-Control-Allow-Origin']   = '*'
-      response['Access-Control-Allow-Headers']  = 'Authorization, Content-Length'
+      add_cors_headers(request, response)
       response['Access-Control-Expose-Headers'] = 'ETag'
     end
 
@@ -329,10 +327,6 @@ module FakeS3
     def do_OPTIONS(request, response)
       super
       add_cors_headers(request, response)
-      response['Access-Control-Allow-Origin']   = '*'
-      response['Access-Control-Allow-Methods']  = 'PUT, POST, HEAD, GET, OPTIONS'
-      response['Access-Control-Allow-Headers']  = 'Accept, Content-Type, Authorization, Content-Length, ETag'
-      response['Access-Control-Expose-Headers'] = 'ETag'
     end
 
     private
