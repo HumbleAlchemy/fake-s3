@@ -137,6 +137,14 @@ module FakeS3
       end
     end
 
+    def self.append_common_prefixes_to_list_bucket_result(lbr, prefixes)
+      return if prefixes.nil? or prefixes.size == 0
+
+      prefixes.each do |common_prefix|
+        lbr.CommonPrefixes { |contents| contents.Prefix(common_prefix) }
+      end
+    end
+
     def self.bucket_query(bucket_query)
       output = ""
       bucket = bucket_query.bucket
@@ -149,6 +157,7 @@ module FakeS3
         lbr.MaxKeys(bucket_query.max_keys)
         lbr.IsTruncated(bucket_query.is_truncated?)
         append_objects_to_list_bucket_result(lbr,bucket_query.matches)
+        append_common_prefixes_to_list_bucket_result(lbr, bucket_query.common_prefixes)
       }
       output
     end
@@ -172,6 +181,40 @@ module FakeS3
             grant.Permission("FULL_CONTROL")
           end
         end
+      }
+      output
+    end
+
+    # <CopyObjectResult>
+    #   <LastModified>2009-10-28T22:32:00</LastModified>
+    #   <ETag>"9b2cf535f27731c974343645a3985328"</ETag>
+    # </CopyObjectResult>
+    def self.copy_object_result(object)
+      output = ""
+      xml = Builder::XmlMarkup.new(:target => output)
+      xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+      xml.CopyObjectResult { |result|
+        result.LastModified(object.modified_date)
+        result.ETag("\"#{object.md5}\"")
+      }
+      output
+    end
+
+    # <CompleteMultipartUploadResult>
+    #   <Location>http://Example-Bucket.s3.amazonaws.com/Example-Object</Location>
+    #   <Bucket>Example-Bucket</Bucket>
+    #   <Key>Example-Object</Key>
+    #   <ETag>"3858f62230ac3c915f300c664312c11f-9"</ETag>
+    # </CompleteMultipartUploadResult>
+    def self.complete_multipart_result(object)
+      output = ""
+      xml = Builder::XmlMarkup.new(:target => output)
+      xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+      xml.CompleteMultipartUploadResult { |result|
+        result.Location("TODO: implement")
+        result.Bucket("TODO: implement")
+        result.Key(object.name)
+        result.ETag("\"#{object.md5}\"")
       }
       output
     end
