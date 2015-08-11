@@ -223,6 +223,7 @@ module FakeS3
     def add_cors_headers(request, response)
       response['Access-Control-Allow-Origin'] = '*' if request['Origin']
       response['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS' if request['Origin']
+      response['Access-Control-Allow-Headers'] = '*' if request['Origin']
     end
 
     def get_bucket(bucket)
