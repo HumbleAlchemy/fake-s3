@@ -65,17 +65,12 @@ module FakeS3
       @root_hostnames = [hostname,'localhost','s3.amazonaws.com','s3.localhost']
     end
 
-<<<<<<< HEAD
-    def do_OPTIONS(request, response)
-      add_cors_headers(request, response)
-      super
-=======
+
     def validate_request(request)
       req = request.webrick_request
       return if req.nil?
       return if not req.header.has_key?('expect')
       req.continue if req.header['expect'].first=='100-continue'
->>>>>>> c359b2c6bade9684340858b327fc8b428d297944
     end
 
     def do_GET(request, response)
@@ -333,7 +328,7 @@ module FakeS3
 
     def do_OPTIONS(request, response)
       super
-
+      add_cors_headers(request, response)
       response['Access-Control-Allow-Origin']   = '*'
       response['Access-Control-Allow-Methods']  = 'PUT, POST, HEAD, GET, OPTIONS'
       response['Access-Control-Allow-Headers']  = 'Accept, Content-Type, Authorization, Content-Length, ETag'
@@ -457,15 +452,7 @@ module FakeS3
       s_req.webrick_request = webrick_req
     end
 
-<<<<<<< HEAD
-    def normalize_post(webrick_req, s_req)
-      form = webrick_req.query
-      file = form['file']
-      s_req.object = form['key'].sub('${filename}', file.filename)
-      headers = {'content-type' => [file['content-type']]}
-      s_req.webrick_request = PostRequest.new(headers, file)
-      s_req.type = Request::STORE
-=======
+
     def normalize_post(webrick_req,s_req)
       path = webrick_req.path
       path_len = path.size
@@ -481,7 +468,6 @@ module FakeS3
       else
         s_req.object = path[1..-1]
       end
->>>>>>> c359b2c6bade9684340858b327fc8b428d297944
     end
 
     # This method takes a webrick request and generates a normalized FakeS3 request
@@ -508,11 +494,8 @@ module FakeS3
       when 'DELETE'
         normalize_delete(webrick_req,s_req)
       when 'POST'
-<<<<<<< HEAD
-        normalize_post(webrick_req, s_req)
-=======
         normalize_post(webrick_req,s_req)
->>>>>>> c359b2c6bade9684340858b327fc8b428d297944
+
       else
         raise "Unknown Request"
       end
