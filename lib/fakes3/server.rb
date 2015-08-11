@@ -239,6 +239,7 @@ module FakeS3
     end
 
     def do_POST(request,response)
+      add_cors_headers(request, response)
       s_req = normalize_request(request)
       key   = request.query['key']
       query = CGI::parse(request.request_uri.query || "")
@@ -304,7 +305,7 @@ module FakeS3
       end
 
       response['Content-Type']                  = 'text/xml'
-      add_cors_headers(request, response)
+      
       response['Access-Control-Expose-Headers'] = 'ETag'
     end
 
