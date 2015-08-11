@@ -224,7 +224,7 @@ module FakeS3
       response['Access-Control-Allow-Origin'] = '*' if request['Origin']
       response['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS' if request['Origin']
       response['Access-Control-Allow-Method'] = '*' if request['Origin']
-      response['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Amz-User-Agent, x-amz-security-token' if request['Origin']
+      response['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Amz-User-Agent, x-amz-security-token, X-Amz-Date' if request['Origin']
     end
 
     def get_bucket(bucket)
